@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { redirectToCheckout } from "../lib/shopify";
 import {
   Wind,
   ArrowRight,
@@ -86,6 +87,14 @@ export default function Home() {
   const [analysisText, setAnalysisText] = useState(
     "Calculating HRV baseline potential..."
   );
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  // Checkout handler - pass any variant ID
+  const handleCheckout = async (variantId: string) => {
+    setCheckoutLoading(true);
+    await redirectToCheckout(variantId);
+    setCheckoutLoading(false);
+  };
 
   const startQuiz = () => {
     setShowQuiz(true);
@@ -560,8 +569,12 @@ export default function Home() {
                     </ul>
 
                     <div className="flex flex-col gap-3">
-                      <button className="w-full bg-teal-500 text-black font-bold py-4 rounded-xl hover:bg-teal-400 transition-all transform hover:scale-[1.02] text-lg">
-                        Unlock My Protocol ($49/yr)
+                      <button 
+                        onClick={() => handleCheckout("gid://shopify/ProductVariant/52429135053167")}
+                        disabled={checkoutLoading}
+                        className="w-full bg-teal-500 text-black font-bold py-4 rounded-xl hover:bg-teal-400 transition-all transform hover:scale-[1.02] text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {checkoutLoading ? 'Redirecting to checkout...' : 'Unlock My Protocol ($49/yr)'}
                       </button>
                       <p className="text-xs text-center text-slate-500">
                         Includes 30-day money-back guarantee.
